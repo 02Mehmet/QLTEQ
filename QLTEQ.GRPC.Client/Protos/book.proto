@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option csharp_namespace = "QLTEQ.GRPC.Protos";
+
+service Book {
+  rpc SelectAll (Empty) returns (Books);
+  rpc SelectByID (BookFilter) returns (BookVM);
+  rpc Insert (BookVM) returns (Empty);
+  rpc Update (BookVM) returns (Empty);
+  rpc Delete (BookFilter) returns (Empty);
+}
+
+message Empty {
+
+}
+
+message BookVM {
+  int32 BookID = 1;
+  string Title = 2;
+  double Price = 3;
+  string AuthorName = 4;
+  string AuthorBiografi =5;
+  string AuthorAddress = 6;
+  string AuthorBirthDate = 7;
+  string PublisherName = 8;
+  string PublisherAddress =9;
+  string PublishDate = 10;
+}
+
+message Books
+{
+   repeated BookVM items = 1;
+}
+
+message BookFilter
+{
+   int32 BookID = 1;
+}
