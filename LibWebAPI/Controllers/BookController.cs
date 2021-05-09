@@ -5,6 +5,7 @@ using LibWebAPI.Business.Abstract;
 using LibWebAPI.Business.Concrete;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using QLTEQ.GRPC.Protos;
 
 namespace LibWebAPI.Controllers
 {
@@ -20,15 +21,15 @@ namespace LibWebAPI.Controllers
         }
 
         [HttpGet]
-        public List<EntityFramework.Models.Book> Get()
+        public Books Get()
         {
             return _bookService.GetAllBooks();
         }
 
-        [HttpGet("{isbn}")]
-        public EntityFramework.Models.Book Get(string isbn)
+        [HttpGet("{bookId}")]
+        public BookVM Get(int bookId)
         {
-            return _bookService.GetBookByIsbn(isbn);
+            return _bookService.GetBookById(bookId);
         }
 
         [Authorize]
@@ -36,6 +37,20 @@ namespace LibWebAPI.Controllers
         public void Create(EntityFramework.Models.Book book)
         {
              _bookService.CreateBook(book);
+        }
+
+        [Authorize]
+        [HttpPost("update")]
+        public void Update(EntityFramework.Models.Book book)
+        {
+            _bookService.Update(book);
+        }
+
+        [Authorize]
+        [HttpPost("delete")]
+        public void Delete(int bookId)
+        {
+            _bookService.DeleteBookById(bookId);
         }
     }
 }

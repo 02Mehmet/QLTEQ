@@ -57,7 +57,7 @@ namespace LibWebAPI
 
             app.UseAuthorization();
 
-            app.UseAuthentication();
+            //app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

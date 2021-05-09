@@ -1,14 +1,15 @@
 using EntityFramework.Models;
+using QLTEQ.GRPC.Protos;
 using System.Collections.Generic;
 
 namespace LibWebAPI.Abstract
 {
     public interface IBookRepository
     {
-        List<Book> GetAllBooks();
-        Book GetBookByIsbn(string isbn);
-        void CreateBook(Book book);
-        Book Update(Book book);
-        void DeleteBook(int id);
+        Books GetAllBooks();
+        BookVM GetBookById(int id);
+        void CreateBook(EntityFramework.Models.Book book);
+        void Update(EntityFramework.Models.Book book);
+        void DeleteBookById(int id);
     }
 }
