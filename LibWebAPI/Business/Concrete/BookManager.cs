@@ -3,6 +3,7 @@ using EntityFramework.Models;
 using LibWebAPI.Abstract;
 using LibWebAPI.Business.Abstract;
 using LibWebAPI.Concrete;
+using QLTEQ.GRPC.Protos;
 
 namespace LibWebAPI.Business.Concrete
 {
@@ -14,29 +15,29 @@ namespace LibWebAPI.Business.Concrete
         {
             _bookRepository = new BookRepository();
         }
-        public void CreateBook(Book book)
+        public void CreateBook(EntityFramework.Models.Book book)
         {
             _bookRepository.CreateBook(book);
         }
 
-        public void DeleteBook(int id)
+        public void DeleteBookById(int id)
         {
-            _bookRepository.DeleteBook(id);
+            _bookRepository.DeleteBookById(id);
         }
 
-        public List<Book> GetAllBooks()
+        public Books GetAllBooks()
         {
             return _bookRepository.GetAllBooks();
         }
 
-        public Book GetBookByIsbn(string isbn)
+        public BookVM GetBookById(int id)
         {
-            return _bookRepository.GetBookByIsbn(isbn);
+            return _bookRepository.GetBookById(id);
         }
 
-        public Book Update(Book book)
+        public void Update(EntityFramework.Models.Book book)
         {
-            return _bookRepository.Update(book);
+            _bookRepository.Update(book);
         }
     }
 }

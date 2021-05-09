@@ -28,7 +28,6 @@ namespace LibWebAPI.Concrete
         }
 
         public void CreateBook(EntityFramework.Models.Book book)
-
         {
             var createdBook = bookClient.Insert(new BookVM()
             {
@@ -44,22 +43,44 @@ namespace LibWebAPI.Concrete
                 PublishDate = book.PublishDate.ToString()
             });
         }
-        public void DeleteBook(int id)
+        public void DeleteBookById(int id)
         {
+            BookFilter request = new BookFilter { BookID = id };
+            var deletedBook = bookClient.Delete(request);
+        }
+        public Books GetAllBooks()
+        {
+            var getAll = bookClient.SelectAll(new Empty());
+            List<BookVM> books = new List<BookVM>();
+            foreach (var book in getAll.Items)
+            {
+                books.Add(book);
+            }
 
+            return getAll;
         }
-        public List<EntityFramework.Models.Book> GetAllBooks()
+        public BookVM GetBookById(int id)
         {
-            return null;
-        }
-        public EntityFramework.Models.Book GetBookByIsbn(string isbn)
-        {
-            return null;
+            BookFilter request = new BookFilter { BookID = id };
+            var book =  bookClient.SelectByID(request);
+            return book;
         }
 
-        public EntityFramework.Models.Book Update(EntityFramework.Models.Book book)
+        public void Update(EntityFramework.Models.Book book)
         {
-            return null;
+            var createdBook = bookClient.Insert(new BookVM()
+            {
+                BookID = book.BookID,
+                Title = book.Title,
+                Price = book.Price,
+                AuthorName = book.AuthorName,
+                AuthorAddress = book.AuthorAddress,
+                AuthorBiografi = book.AuthorBiografi,
+                AuthorBirthDate = book.AuthorBirthDate.ToString(),
+                PublisherName = book.PublisherName,
+                PublisherAddress = book.PublisherAddress,
+                PublishDate = book.PublishDate.ToString()
+            });
         }
     }
 }
