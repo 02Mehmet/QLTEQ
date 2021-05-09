@@ -1,4 +1,7 @@
-﻿using LibWebAPI.Models;
+﻿using LibWebAPI.Business.Abstract;
+using LibWebAPI.Business.Concrete;
+using LibWebAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
@@ -13,10 +16,31 @@ namespace LibWebAPI.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        [HttpGet]
-        public List<EntityFramework.Models.Book> Get()
+        private IRegisterService _registerService;
+        private ITokenService _tokenService;
+
+        public AccountController()
         {
-            return null;
+            _registerService = new RegisterManager();
+            _tokenService = new TokenManager();
+        }
+
+        [HttpPost("register")]
+        public ActionResult Register([FromBody] RegisterVM register)
+        {
+            string result = _registerService.Register(register);
+
+            return Ok(result);
+        }
+
+        [HttpPost("token")]
+        [AllowAnonymous]
+        [Consumes("application/x-www-form-urlencoded")]
+        public IActionResult GetToken([FromForm] TokenVM model)
+        {
+            string result = _tokenService.GetToken(model);
+
+            return Ok(result);
         }
     }
 }
