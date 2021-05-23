@@ -6,6 +6,10 @@ using LibWebAPI.Business.Concrete;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using QLTEQ.GRPC.Protos;
+using System.Threading.Tasks;
+using System.Net.Http;
+using IdentityModel.Client;
+using Microsoft.Extensions.Configuration;
 
 namespace LibWebAPI.Controllers
 {
@@ -14,9 +18,11 @@ namespace LibWebAPI.Controllers
     public class BookController : ControllerBase
     {
         private IBookService _bookService;
+        private readonly IConfiguration _config;
 
-        public BookController()
+        public BookController(IConfiguration config)
         {
+            _config = config;
             _bookService = new BookManager();
         }
 
@@ -26,10 +32,17 @@ namespace LibWebAPI.Controllers
             return _bookService.GetAllBooks();
         }
 
+        //[HttpGet]
+        //public async Task<string> GetAllBytes()
+        //{
+        //    return await _bookService.GetAllBookBytes();
+        //}
+
         [HttpGet("{bookId}")]
-        public BookVM Get(int bookId)
+        public async Task<BookVM> Get(int bookId)
         {
-            return _bookService.GetBookById(bookId);
+            var token =  await GetTokenFromIS4();
+            return _bookService.GetBookById(bookId,token);
         }
 
         [Authorize]
@@ -51,6 +64,35 @@ namespace LibWebAPI.Controllers
         public void Delete(int bookId)
         {
             _bookService.DeleteBookById(bookId);
+        }
+
+        //[HttpGet("{bookId}")]
+        //public BookVM GetByte(int bookId)
+        //{
+        //    return _bookService.GetBookById(bookId);
+        //}
+        private async Task<string> GetTokenFromIS4()
+        {
+            // discover endpoints from metadata
+            var client = new HttpClient();
+            var disco = await client.GetDiscoveryDocumentAsync(_config.GetValue<string>("WorkerService:IdentityServerUrl"));
+            if (disco.IsError)
+            {
+                return string.Empty;
+            }
+            // request token
+            var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+            {
+                Address = disco.TokenEndpoint,//https:localhost:5005/connect/token
+                ClientId = "UserAuthenticationClient",
+                ClientSecret = "secret",
+                Scope = "Email"
+            });
+            if (tokenResponse.IsError)
+            {
+                return string.Empty;
+            }
+            return tokenResponse.AccessToken;
         }
     }
 }

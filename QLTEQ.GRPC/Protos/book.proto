@@ -4,6 +4,8 @@ option csharp_namespace = "QLTEQ.GRPC.Protos";
 
 service Book {
   rpc SelectAll (Empty) returns (Books);
+  rpc SelectAllBytes (Empty) returns (stream BookBytesResponse);
+  rpc SelectAllBytes1 (Empty) returns (stream BookBytesResponse1);
   rpc SelectByID (BookFilter) returns (BookVM);
   rpc Insert (BookVM) returns (Empty);
   rpc Update (BookVM) returns (Empty);
@@ -12,6 +14,14 @@ service Book {
 
 message Empty {
 
+}
+
+message BookBytesResponse {
+   bytes data = 1;
+}
+
+message BookBytesResponse1 {
+   string data = 1;
 }
 
 message BookVM {

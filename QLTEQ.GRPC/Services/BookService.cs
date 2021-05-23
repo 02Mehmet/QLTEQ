@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EntityFramework;
+using Google.Protobuf;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using QLTEQ.GRPC.Protos;
 
 namespace QLTEQ.GRPC.Services
 {
+    [Authorize]
     public class BookService : Book.BookBase
     {
         private QlteqContext db = null;
@@ -35,6 +38,54 @@ namespace QLTEQ.GRPC.Services
             }).AsEnumerable();
             responseData.Items.AddRange(query.ToArray());
             return Task.FromResult(responseData);
+        }
+
+        public override async Task SelectAllBytes(Empty request, IServerStreamWriter<BookBytesResponse> responseStream, ServerCallContext context)
+        {
+            Books responseData = new Books();
+            var query = db.Books.Select(s => new BookVM()
+            {
+                BookID = s.BookID,
+                Title = s.Title,
+                Price = s.Price,
+                AuthorName = s.AuthorName,
+                AuthorAddress = s.AuthorAddress,
+                AuthorBiografi = s.AuthorBiografi,
+                AuthorBirthDate = s.AuthorBirthDate.ToString(),
+                PublisherName = s.PublisherName,
+                PublisherAddress = s.PublisherAddress,
+                PublishDate = s.PublishDate.ToString()
+            }).AsEnumerable();
+            foreach (var customer in query)
+            {
+                BookBytesResponse payload = new BookBytesResponse();
+                payload.Data = ByteString.CopyFrom(customer.ToByteArray());
+                await responseStream.WriteAsync(payload);
+            }
+        }
+
+        public override async Task SelectAllBytes1(Empty request, IServerStreamWriter<BookBytesResponse1> responseStream, ServerCallContext context)
+        {
+            Books responseData = new Books();
+            var query = db.Books.Select(s => new BookVM()
+            {
+                BookID = s.BookID,
+                Title = s.Title,
+                Price = s.Price,
+                AuthorName = s.AuthorName,
+                AuthorAddress = s.AuthorAddress,
+                AuthorBiografi = s.AuthorBiografi,
+                AuthorBirthDate = s.AuthorBirthDate.ToString(),
+                PublisherName = s.PublisherName,
+                PublisherAddress = s.PublisherAddress,
+                PublishDate = s.PublishDate.ToString()
+            }).AsEnumerable();
+            foreach (var customer in query)
+            {
+                BookBytesResponse1 payload = new BookBytesResponse1();
+                payload.Data = ByteString.CopyFrom(customer.ToByteArray()).ToBase64();
+                await responseStream.WriteAsync(payload);
+            }
         }
 
         public override Task<BookVM> SelectByID(BookFilter requestData, ServerCallContext context)

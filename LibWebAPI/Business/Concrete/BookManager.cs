@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using EntityFramework.Models;
 using LibWebAPI.Abstract;
 using LibWebAPI.Business.Abstract;
@@ -25,14 +26,19 @@ namespace LibWebAPI.Business.Concrete
             _bookRepository.DeleteBookById(id);
         }
 
+        public async Task<string> GetAllBookBytes()
+        {
+            return await _bookRepository.GetAllBookBytes();
+        }
+
         public Books GetAllBooks()
         {
             return _bookRepository.GetAllBooks();
         }
 
-        public BookVM GetBookById(int id)
+        public BookVM GetBookById(int id, string token)
         {
-            return _bookRepository.GetBookById(id);
+            return _bookRepository.GetBookById(id,token);
         }
 
         public void Update(EntityFramework.Models.Book book)

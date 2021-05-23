@@ -28,10 +28,6 @@ namespace LibWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add EF services to the services container.
-            // services.AddEntityFrameworkSqlServer()
-            //    .AddDbContext<DataContext>(options =>
-            //       options.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
 
             services.AddSingleton(c => Configuration);
             services.AddControllers();
